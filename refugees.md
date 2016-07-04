@@ -8,6 +8,7 @@ Tim Hill
 library(dplyr)
 library(ggplot2)
 library(scales)
+library(RColorBrewer)
 ```
 
 The csv file is a combination of three different datasets from the WorldBank, see 
@@ -140,7 +141,7 @@ noregions[,1]
  
 So the NA's are aggregated data for various groupings.
 
-## First plots - Refugee Data
+## Refugee Data by country & population
 
 ```r
 ### All countries
@@ -234,6 +235,47 @@ plot5
 ![](refugees_files/figure-html/unnamed-chunk-8-1.png) 
 
 
+### Compare World Regions
+Aggregate the data under the *Region* variable and see how different parts of the world compare.  Again, the data has been standardised by number of refugees per 10,000 population
 
+```r
+regionData <- refdata %>% 
+  filter(!is.na(Region)) %>%
+  group_by(Region, year) %>%
+  summarise(refugees = sum(numberRefs, na.rm = T), popn = sum(popn, na.rm = T)) %>%
+  mutate(refugees.per10000popn = refugees/(popn/10000)) %>%
+  ungroup()
+
+plot6 <- ggplot(regionData, aes(x = year, y = refugees.per10000popn, colour = Region)) +
+  geom_line() + scale_y_log10(labels = comma) + scale_colour_brewer(palette = "Set1")
+plot6
+```
+
+![](refugees_files/figure-html/unnamed-chunk-9-1.png) 
+
+We can see some real differences between the regions in this plot - and some strange data for the Latin America and Caribbean region that might be worthwhile looking into sometime.
+
+### Compare by Income Group
+
+Similar to the last plot, but this time we will aggregate by the Income grouping
+
+
+```r
+incomeData <- refdata %>% 
+  filter(!is.na(IncomeGroup)) %>%
+  group_by(IncomeGroup, year) %>%
+  summarise(refugees = sum(numberRefs, na.rm = T), popn = sum(popn, na.rm = T)) %>%
+  mutate(refugees.per10000popn = refugees/(popn/10000)) %>%
+  ungroup()
+
+plot7 <- ggplot(incomeData, aes(x = year, y = refugees.per10000popn, colour = IncomeGroup)) +
+  geom_line() + scale_y_log10(labels = comma) + scale_colour_brewer(palette = "Set1")
+
+plot7
+```
+
+![](refugees_files/figure-html/unnamed-chunk-10-1.png) 
+
+Now this is interesting - the low income groups tend to have the largest refugee populations and the group with the lowest overall population is the non OECD high income countries. 
 
 
