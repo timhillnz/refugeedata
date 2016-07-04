@@ -10,7 +10,8 @@ library(ggplot2)
 library(scales)
 ```
 
-The csv file is a combination of three different datasets from the WorldBank, see  github.com/timhillnz/refugeedata/prepareData.R 
+The csv file is a combination of three different datasets from the WorldBank, see 
+github.com/timhillnz/refugeedata/prepareData.R 
 
 ## Load prepared data and have a quick look at it - 
 
@@ -51,7 +52,8 @@ str(refdata)
 ##  $ gdp         : num  NA NA NA NA 2749 ...
 ```
 
-There are a number of NA's in the Region and Income Group variables.  Let's look at this a bit further - 
+There are a number of NA's in the Region and Income Group variables.
+Let's look at this a bit further - 
 
 ```r
 ## How many countries in each region?
@@ -93,7 +95,8 @@ refdata %>% group_by(IncomeGroup)  %>% summarise(number = n_distinct(Country.Nam
 
 ```r
 ## List the 'countries' with no region
-noregions <- as.data.frame(refdata %>% distinct(Country.Name) %>% group_by(Country.Name) %>% filter(is.na(Region))) %>% droplevels()
+noregions <- as.data.frame(refdata %>% distinct(Country.Name) %>% group_by(Country.Name) 
+                           %>% filter(is.na(Region))) %>% droplevels()
 noregions[,1]
 ```
 
@@ -163,7 +166,9 @@ plot2
 
 ![](refugees_files/figure-html/unnamed-chunk-5-1.png) 
 
-Somewhat better - but there's no standardisation and, with vastly different resident population numbers in those countries, it's not useful to compare raw numbers of refugees.
+Somewhat better - but there's no standardisation and, with vastly different resident 
+population numbers in those countries, it's not useful to compare raw numbers of refugees.
+
 We'll create a new variable - number of refugees per 10,000 host population.
 
 
@@ -185,7 +190,10 @@ plot3
 Still getting better - this time we'll limit the countries even further
 
 ```r
-plotdata4 <- refdata %>% filter(Country.Name %in% c("Australia","France","Germany","New Zealand","United Kingdom","United States")) %>% droplevels()
+plotdata4 <- refdata %>% filter(Country.Name %in% 
+                                  c("Australia","France","Germany","New Zealand",
+                                    "United Kingdom","United States")) %>% 
+  droplevels()
 
 plot4 <- ggplot(plotdata4, aes(x = year, y = refugees.per10000popn , colour = Country.Name)) +
   geom_line()
@@ -200,7 +208,9 @@ Much better.
 Now we'll look at the data for the OECD and other high income countries for 2014.
 
 ```r
-## Create plot dataset for the selected countries.  Will also add a variable so Australia and NZ can be easily identified
+## Create plot dataset for the selected countries.  
+#Will also add a variable so Australia and NZ can be easily identified
+
 plotdata5 <- refdata %>% 
   filter(year == "2014",IncomeGroup %in% c("High income: nonOECD", "High income: OECD"), 
          !is.na(refugees.per10000popn)) %>% 
